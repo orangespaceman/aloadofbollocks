@@ -2,8 +2,6 @@
  * Site global JS file
  */
 
-
-
 	/**
 	 * on Dom ready functionality
 	 */
@@ -17,6 +15,19 @@
 				formElement: "#j-bomb-form",
 				ajaxPath: "./_includes/php/ajax/submit/"
 			});
+			
+			//  copy to clipboard	
+			Permalinks.init(); 
+			
+			
+			// init more bombs link (bottom)
+			bombs.initAddMoreLink({
+				ajaxPath: "./_includes/php/ajax/retrieve/"
+			});			
+			
+			// init order by
+			bombs.initOrderBy();
+			
 		});
 
 

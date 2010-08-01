@@ -20,9 +20,27 @@ class dbCalls {
 	/*
 	 * get bombs
 	 */
-	function getBombs() {
-		$sql = "SELECT *, date_format(dateadded, '%e/%c/%y, %k:%i') as dateadded from `j-bombs`";
+	function getBombs($count="10", $offset="0", $orderby="d") {
+		
+		$sql = "SELECT *, date_format(dateadded, '%W %D %M %Y, %k:%i') as date_added from `j-bombs` ";
+
+		if ($orderby == "d") {
+			$sql .= " Order by dateadded desc ";
+		} else if ($orderby == "p") {
+			$sql .= " Order by views desc ";
+		}
+
+		if (!empty($count)) {
+			$sql .= " Limit " . $offset . " , " . $count;
+		}
+
 		$result = $this->dbCon->selectQuery($sql);
+		
+		// add in a hard-coded URL
+		foreach ($result as $value) {
+			$value->url = 'http://' . $_SERVER['SERVER_NAME'] . '/' . $value->slug;
+		}
+		
 		return $result;
 	}
 	
@@ -33,6 +51,16 @@ class dbCalls {
 	 */
 	function getBomb($slug) {
 		$sql = "SELECT * FROM `j-bombs` WHERE `slug` = '".$slug."' limit 0,1";
+		$result = $this->dbCon->selectQuery($sql);
+		return $result;
+	}
+
+
+	/*
+	 * get bomb
+	 */
+	function getBombCount() {
+		$sql = "SELECT count('id') as bombcount FROM `j-bombs`";
 		$result = $this->dbCon->selectQuery($sql);
 		return $result;
 	}
@@ -145,12 +173,11 @@ class dbCalls {
 		
 			//insert 
 			$sql = "INSERT into `j-bombs` 
-				(title, slug, imgurl, midiurl, midilocal, ip, views, dateadded) values (
+				(title, slug, imgurl, midiurl, ip, views, dateadded) values (
 					'".$post['title']."', 
 					'".$post['slug']."',
 					'".$post['imgurl']."', 
 					'".$post['midiurl']."', 
-					'".$post['midilocal']."', 
 					'".$_SERVER['REMOTE_ADDR']."', 
 					'0', 
 					 NOW()
@@ -159,6 +186,10 @@ class dbCalls {
 			$result = $this->dbCon->addQuery($sql);
 			
 			$url = 'http://' . $_SERVER['SERVER_NAME'] . '/' . $post['slug'];
+			
+			$post['url'] = $url;
+			$post['dateadded'] = "Just now";
+			$post['views'] = 0;
 			
 			return array( 
 				'success' => true,

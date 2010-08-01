@@ -44,8 +44,8 @@ class dbCon {
 			list($return) = @mysql_fetch_row($result);
 
 		//condition : if it is a single row, don't bother putting it into an array first
-		} else if (@mysql_num_rows($result) === 1) {
-			$return = @mysql_fetch_object($result);
+		//} else if (@mysql_num_rows($result) === 1) {
+		//	$return = @mysql_fetch_object($result);
 		
 		// it is more than a single row, start an array to contain each object...
 		} else {

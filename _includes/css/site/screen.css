@@ -95,20 +95,31 @@
 			font-style: normal;
 		}
 		
+		@font-face {
+			font-family: 'SilkscreenNormal';
+			src: url('../../fonts/slkscreb-webfont.eot');
+			src: local('☺'), url('../../fonts/slkscreb-webfont.woff') format('woff'), url('../../fonts/slkscreb-webfont.ttf') format('truetype'), url('../../fonts/slkscreb-webfont.svg#webfontR9lP7Fqf') format('svg');
+			font-weight: normal;
+			font-style: normal;
+		}
+		
 		
 
 
 /* HTML elements */
 	html {
-		height:100.1%;
+		overflow-y:scroll;
 	}
 	
 	body {
 		background: #000;
-		min-height:100%;
-		color:#ccc;
+		color:#999;
 		font:62.5%/1.25 LaffayetteComicProRegular, Helvetica, Arial, sans-serif; /* reset 1em to 10px */
 	}
+	
+	/* for sticky footer */
+	html, body { height:100%; }
+	
 
 	/* headings */
 		h1,
@@ -118,15 +129,17 @@
 		}
 
 		h1 { 
+			font-family: SilkscreenNormal, monospace;
 			line-height:1;
-			font-size:3.0em;
+			font-size:6em;
 			font-weight:bold;
-			margin:1em 50px;
+			margin:0 10px;
 		}
 
 		h2 {
-			font-size:2.4em;
-			margin-bottom:1em;
+			font-size:1.6em;
+			margin-bottom:0.2em;
+			color:#fff;
 		}
 		
 		h3 {
@@ -265,7 +278,7 @@
 
 				.input-container label {
 					float:left;
-					width:10em;
+					width:11em;
 					margin-right:1em;
 					padding-top:0.3em;
 					font-size:1.6em;
@@ -273,7 +286,7 @@
 
 				.input-container p.error {
 					position:absolute;
-					right:-190px;
+					right:-120px;
 					top:0;
 					width:170px;
 					margin:0;
@@ -391,10 +404,9 @@
 		p,
 		address,
 		time {
-			font-size:1.4em;
+			font-size:1.1em;
 			font-style:normal;
-			margin-bottom:1em;
-			line-height:1.5;
+			margin-bottom:0.2em;
 		}
 		
 		time {
@@ -420,7 +432,7 @@
 		
 		img {
 			background:transparent no-repeat left top;
-			margin-bottom:1em;
+
 		}
 		
 		/* misc: extra classes */
@@ -438,6 +450,7 @@
 		a:hover,
 		a:active,
 		a:focus { 
+			text-decoration:underline;
 		}
 		
 		a:hover {
@@ -544,8 +557,8 @@
         ul.horiznavlist li {
             display : block;
             float : left;
-            padding : 0px 6px 0px 6px;
-            border-right : 1px solid #000;
+            padding : 0px 8px 0px 8px;
+            border-right : 1px solid #ccc;
             background : none;
         }
 
@@ -563,15 +576,67 @@
 
 /* global ids / areas */
 	#wrapper {
-		
+		min-height: 100%;
+		margin-bottom:-20px;
 	}
+	
+	
+	/* header */
+		header {
+			padding: 0;
+			background:#fff;
+			border-bottom:2px solid #f90;
+			position:fixed;
+			top:0;
+			z-index:1;
+			width:100%;
+		}
+		
+		header h1 {
+			float:left;
+			width:40%;
+		}
+		
+		/* header : order block */
+			header #order {
+				float:right;
+				width:40%;
+				padding:10px;
+			}
+			
+			header #order a {
+				color:#000;
+			}
+			
+			header #order a.selected {
+				color:#999;
+				text-decoration:none;
+				cursor:default;
+			}
+
+			header #order p {
+				text-align:right;
+				font-size:1.8em;
+				margin:0;
+			}
+			
+			header #order ul {
+				margin:0;
+				float:right;
+				font-size:1.1em;
+				padding:2px 0 0 22px;
+			}
+			
+			header #order ul.loading {
+				background:url(../../img/site/ajax-loader-white.gif) #fff no-repeat left top;
+			}
+			
 	
 	/* bomb form */
 		#bomb-form {
-			float:left;
-			width:525px;
-			margin:30px 50px;
+			margin:70px auto 0 auto;
 			padding:25px;
+			width:600px;
 		
 			-moz-border-radius:3px;
 			-webkit-border-radius:3px;
@@ -583,54 +648,55 @@
 		
 			background:#666;
 		}
-	
+		
+		body.js #bomb-form {
+			position:fixed;
+			margin-top:-1000px;
+			top:50%;
+			z-index:4;
+			left:50%;
+			margin-left:-300px;
+			height:250px;
+		}
+		
+		#bomb-form p#close-form {
+			float:right;
+		}
+		
+		body.js #hider {
+			position:absolute;
+			width:100%;
+			min-height:100%;
+			left:0;
+			top:0;
+			background:rgba(0, 0, 0, 0.6);
+			z-index:3;
+		}
+		
 		#bomb-form select {
 			max-width:300px;
 		}
 		
 		#j-bomb-form-midi {
-			display:none;
+
 		}
-		
-	
-	/* bomb success message */
-		#success {
-			float:left;
-			width:225px;
-			margin:30px 0;
-			padding:25px;
-		
-			-moz-border-radius:3px;
-			-webkit-border-radius:3px;
-			border-radius:3px;
-		
-			-moz-box-shadow: 0px 0px 5px #999;
-			-webkit-box-shadow:0px 0px 5px #999;
-			box-shadow: 0px 0px 5px #999;
-		
-			background:#666;
-		}
-		
-		#success textarea {
-			width:215px;
-			font-size:1em;
-		} 
 	
 	
 	/* existing bombs */
 		#existing-bombs {
-			padding:30px 50px;
+			padding:10px 10px 10px 10px;
+		}
+		
+		body.js #existing-bombs {
+			padding-top:70px;
 		}
 	
-		.bomb-wrapper {
-			float:left;
-			width:275px;
-			margin:0 25px 25px 0;
-			font-size:1.1em;
+		.bomb-container {
+			overflow:hidden;
 		}
 	
-		.bomb-wrapper a.bomb {
-			display:block;
+		.bomb {
+			margin-bottom:10px;
 			padding:10px;
 		
 			-moz-border-radius:3px;
@@ -638,38 +704,124 @@
 			border-radius:3px;
 		
 			background:#666;
-			min-height:100px;
-			position:relative;
+			min-height:80px;
 		}
 	
-		.bomb-wrapper a:hover {
-			background:#999;
-			-moz-box-shadow: 0px 0px 5px #999;
-			-webkit-box-shadow:0px 0px 5px #999;
-			box-shadow: 0px 0px 5px #999;
-		}
 	
-		.bomb-wrapper a img {
+		/* bomb : bomb image */
+			.bomb .bomb-image {
+				float:left;
+				width:100px;
+				margin:0 10px 0 0;
+				text-align:center;
+			}
+		
+			.bomb .bomb-image img {
+				display:inline;
+				max-height:80px;
+				max-width:100px;
+				margin:0;
+			}
+
+	
+		/* bomb : bomb content */
+			.bomb .bomb-content {
+				float:left;
+				width:40%;
+			}
+
+		
+		/* bomb : bomb view */
+			.bomb .bomb-view {
+				float:left;
+				width:40%;
+			}
+		
+			.bomb .bomb-view p.url {
+				background:#fff;
+				padding:5px 5px 0 5px;
+				margin-bottom:10px;
+				color:#000;
+				font-size:1.6em;
+				float:left;
+			}
+			
+			.bomb .bomb-view ul {
+				clear:both;
+				font-size:1.2em;
+			}
+			
+			.bomb .bomb-view ul li {
+
+			}
+
+			a.copy-to-clip:hover {
+				text-decoration:none;
+			}
+			
+			span.permalink-tick {
+				padding-left:10px;
+			}
+			
+			span.permalink-tick img {
+				display:inline;
+				vertical-align:top;
+			}
+	
+	
+	/* Fetch more bombs link */
+		p#fetch-more-bombs {
+			float:right;
+			margin:0 10px 40px 0;
+			display:inline;
+		}
+		
+		p#fetch-more-bombs a { 
+			display:block;
+			-moz-border-radius:3px;
+			-webkit-border-radius:3px;
+			border-radius:3px;
+			color:#000;
+			padding:10px 10px 10px 30px;
+			background:url(../../img/site/icon_add_8.png) #fff no-repeat 8px 8px;
+		}
+		
+		p#fetch-more-bombs a.loading {
+			background-image:url(../../img/site/ajax-loader-white.gif);
+		}
+		
+	
+	/* footer */
+		p#page-less {
+			margin-left:10px;
+			display:inline;
 			float:left;
-			max-height:100px;
-			max-width:100px;
-			margin:0 10px 0 0;
 		}
-	
-		.bomb-wrapper a span.bomb-content {
-			float:left;
-			width:140px;
+		
+		p#page-more {
+			margin-right:10px;
+			display:inline;
+			float:right;
 		}
-	
-		.bomb-wrapper a span.bomb-content strong {
-			font-size:1.2em;
+		
+		body.js footer p#page-less,
+		body.js footer p#page-more {
+			display:none;
 		}
+		
 	
-		.bomb-wrapper a.bomb span.edit {
-			position:absolute;
-			bottom:10px;
+	/* sticky foot */
+		#count {
+			background:#fff;
+			border-top:2px solid #f90;
+			color:#666;
+			margin:0 auto;
+			height:30px;
+			width:100%;
 		}
-	
-		.bomb-wrapper a.bomb span.edit:hover {
-			color:#ff0;
+		
+		#count p {
+			line-height:30px;
+			margin-left:10px;
+			display:inline;
 		}

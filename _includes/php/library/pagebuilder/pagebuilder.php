@@ -45,12 +45,12 @@ class PageBuilder {
 		</style>
 		';
 		
-		if (!empty($bomb->midiurl) || !empty($bomb->midilocal)) {
+		if (!empty($bomb->midiurl)) {
 			$return .= '
 		<script src="./_includes/js/lib/midi/addMidi.js"></script>
 		<script>
 			window.onload = function() {
-			 	//addMidi.init("./midi.mid", "midifile");
+			 	addMidi.init("'.$bomb->midiurl.'", "midifile");
 			}
 		</script>
 			';
@@ -77,9 +77,12 @@ class PageBuilder {
 	 */
 	function buildForm($message="") {
 
-		$bombs = $this->dbcalls->getBombs();
-		
-		$localMidiFiles = $this->getLocalMidiFiles();
+		// get bombs
+		$count = (isset($_GET['c'])) ? $_GET['c'] : 10;
+		$offset = (isset($_GET['s'])) ? $_GET['s'] : 0;
+		$order = (isset($_GET['o']) && $_GET['o'] == "p") ? "p" : "d";		
+		$bombs = $this->dbcalls->getBombs($count, $offset, $order);
+		$bombCount = $this->dbcalls->getBombCount();
 
 		$return = '<!DOCTYPE html>
 <html>
@@ -92,143 +95,161 @@ class PageBuilder {
 			google.load("jquery", "1.4.2");
 		</script>
 		<script src="./_includes/js/lib/forms/jquery.typing.min.js"></script>
+		<script src="./_includes/js/lib/clipboard/ZeroClipboard.js"></script>
+		<script src="./_includes/js/lib/clipboard/permalink.js"></script>
 		<script src="./_includes/js/site/form.js"></script>
+		<script src="./_includes/js/site/bombs.js"></script>
 		<script src="./_includes/js/site/init.js"></script>
 	</head>
 	<body>
 		<div id="wrapper">
-			<h1>J-Bomb</h1>
-			
-				<div class="row clearfix">
-					<div id="bomb-form">
-						<h2>Add a J-Bomb</h2>
-						<form id="j-bomb-form" method="POST" action="">
-							<fieldset id="j-bomb-form-image">
-								<legend>J-Bomb image</legend>
-						
-								<div class="input-container clearfix">
-									<label for="imgurl">Image URL</label>
-									<input type="text" class="text required url" id="imgurl" name="imgurl"'; if (isset($_POST['imgurl'])) {$return .= 'value="'.$_POST['imgurl'].'"';} $return .=' />
-								</div>
-							</fieldset>
-						
-							<fieldset id="j-bomb-form-meta">
-								<legend>J-Bomb meta</legend>
-					
-								<div class="input-container clearfix">
-									<label for="title">Title</label>
-									<input type="text" class="text required" id="title" name="title"'; if (isset($_POST['title'])) {$return .= 'value="'.$_POST['title'].'"';} $return .=' /> 
-								</div>
-					
-								<div class="input-container clearfix">
-									<label for="slug">Slug</label>
-									<input type="text" class="text required alphanum" id="slug" name="slug"'; if (isset($_POST['slug'])) {$return .= 'value="'.$_POST['slug'].'"';} $return .=' />
-								</div>
-							</fieldset>
-					
-							<fieldset id="j-bomb-form-midi">
-								<legend>J-Bomb midi</legend>
-								<div class="input-container clearfix">
-									<label for="midilocal">Midi (local)</label>
-									<select id="midilocal" name="midilocal">
-										<option></option>
-								';
-							
-								foreach ($localMidiFiles as $midi) {
-									$return .= '
-										<option>'.$midi.'</option>
-									';
-								}
-							
-								$return .= '
-									</select>
-								</div>
-					
-								<div class="input-container clearfix">
-									<label for="midiurl">Midi (URL)</label>
-									<input type="text" class="text" id="midiurl" name="midiurl"'; if (isset($_POST['midiurl'])) {$return .= 'value="'.$_POST['midiurl'].'"';} $return .=' />
-								</div>
-							</fieldset>
-						
-							<fieldset id="j-bomb-form-submit">
-								<legend>J-Bomb submit</legend>
-					
-								<div class="input-container clearfix">
-									<input type="submit" class="button" value="Save" /> 
-								';
-
-								if (isset($message) && !empty($message)) {
-									$return .= '
-										<p class="error">'.$message['message'].'</p>
-									';
-								}
-
-								$return .= '
-							
-								</div>
-							</fieldset>
-						</form> 
-					</div>
+			<header>
+				<h1>J-BOMB</h1>
+				<div id="order">
+					<ul class="horiznavlist clearfix">
+						<li id="order-date" class="first">Order by: <a class="date" href="./?o=d">Date added</a>
+						<li id="order-popularity" class="last"><a class="popularity" href="./?o=p">Popularity</a>
+					</ul>
 				</div>
+			</header>
 			
-				<div id="existing-bombs" class="clearfix">
-					<h3>Existing J-Bombs</h3>
-			';
-		
+			<div class="row clearfix">
+				<div id="bomb-form">
+					<h2>Add a J-Bomb</h2>
+					<form id="j-bomb-form" method="POST" action="">
+						<fieldset id="j-bomb-form-image">
+							<legend>J-Bomb image</legend>
+					
+							<div class="input-container clearfix">
+								<label for="imgurl">Image URL</label>
+								<input type="text" class="text required url" id="imgurl" name="imgurl"'; if (isset($_POST['imgurl'])) {$return .= 'value="'.$_POST['imgurl'].'"';} $return .=' />
+							</div>
+						</fieldset>
+					
+						<fieldset id="j-bomb-form-meta">
+							<legend>J-Bomb meta</legend>
+				
+							<div class="input-container clearfix">
+								<label for="title">Title</label>
+								<input type="text" class="text required" id="title" name="title"'; if (isset($_POST['title'])) {$return .= 'value="'.$_POST['title'].'"';} $return .=' /> 
+							</div>
+				
+							<div class="input-container clearfix">
+								<label for="slug">Slug</label>
+								<input type="text" class="text required alphanum" id="slug" name="slug"'; if (isset($_POST['slug'])) {$return .= 'value="'.$_POST['slug'].'"';} $return .=' />
+							</div>
+						</fieldset>
+				
+						<fieldset id="j-bomb-form-midi">
+							<legend>J-Bomb midi</legend>
+							<div class="input-container clearfix">
+								<label for="midiurl">Midi URL (optional)</label>
+								<input type="text" class="text" id="midiurl" name="midiurl"'; if (isset($_POST['midiurl'])) {$return .= 'value="'.$_POST['midiurl'].'"';} $return .=' />
+							</div>
+						</fieldset>
+					
+						<fieldset id="j-bomb-form-submit">
+							<legend>J-Bomb submit</legend>
+				
+							<div class="input-container clearfix">
+								<input type="submit" class="button" value="Save" /> 
+							';
 
-			foreach ($bombs as $key => $bomb) {
-				$return .= '
-					<p class="bomb-wrapper" id="bomb-'.$bomb->slug.'">
-						<a class="bomb clearfix" href="./'.$bomb->slug.'">
-							<img src="'.$bomb->imgurl.'" width="100" />
-							<span class="bomb-content">
-								<strong>'.$bomb->title.'</strong><br />
-								<em>Added:</em> <span class="bomb-dateadded">'.$bomb->dateadded.'</span><br />
-								<em>Views:</em> <span class="bomb-views">'.$bomb->views.'</span><br/>
-				';
-				
-				// condition : allow edit if same IP address
-				if ($bomb->ip == $_SERVER['REMOTE_ADDR']) {
-					$return .= '
-								<!--<span class="edit">Edit</span>-->
-					';
-				}
-				
-				$return .= '
-							</span>
-						</a>
-					</p>
+							if (isset($message) && !empty($message)) {
+								$return .= '
+									<p class="error">'.$message['message'].'</p>
+								';
+							}
+
+							$return .= '
+						
+							</div>
+						</fieldset>
+					</form> 
+				</div>
+			</div>
+		
+			<div id="existing-bombs" class="clearfix">
+		';
+	
+
+		foreach ($bombs as $key => $bomb) {
+
+			$url = 'http://' . $_SERVER['SERVER_NAME'] . '/' . $bomb->slug;
+			
+			$return .= '
+				<div class="bomb-container" id="bomb-'.$bomb->slug.'">
+					<div class="bomb clearfix">
+						<div class="bomb-image">
+							<a href="./'.$bomb->slug.'">
+								<img src="'.$bomb->imgurl.'"  />
+							</a>
+						</div>
+						<div class="bomb-content">
+							<h2><a href="./'.$bomb->slug.'">'.$bomb->title.'</a></h2>
+							<p><em>Added:</em> <span class="bomb-dateadded">'.$bomb->date_added.'</span></p>
+							<p><em>Views:</em> <span class="bomb-views">'.$bomb->views.'</span></p>
+						</div>
+						<div class="bomb-view">
+							<p class="url">'.$url.'</p>
+							<ul class="horiznavlist clearfix">
+								<li class="first last"><a href="./'.$bomb->slug.'">View</a></li>
+							</ul>
+						</div>
+		';
+		
+		// condition : allow edit if same IP address
+		if ($bomb->ip == $_SERVER['REMOTE_ADDR']) {
+			$return .= '
+
 			';
 		}
-
+		
 		$return .= '
 				</div>
+			</div>
+		';
+	}
+
+	$return .= '
+			</div>
+
+			<footer>
+				<div class="row clearfix">
+	';
+
+if ($bombCount > $count) {
+	if ($offset > 0) {
+		$return .= '
+			<p id="page-less"><a href="./?s='.($offset-$count).'&amp;o='.$order.'">&lt; More bombs</a></p>
+		';
+	}
+	if ($bombCount > ($offset + $count)) {
+		$return .= '
+			<p id="page-more"><a href="./?s='.($offset+$count).'&amp;o='.$order.'">More bombs &gt;</a></p>
+		';
+	}
+}
+	
+	// create count string
+	$startCount = $offset+1;
+	$endCount = $offset+10;
+	if ($endCount > $bombCount) {
+		$endCount = $bombCount;
+	}
+	$orderbyText = ($order == "p") ? "popularity" : "date";
+	
+	$return .= '
+				</div>
+		</footer>
+	</div>
+	<div id="count">
+		<p>Showing <span id="start-count">'.$startCount.'</span>-<span id="end-count">'.$endCount.'</span> of <span id="bomb-count">'.$bombCount.'</span>, ordered by <span id="order-by">'.$orderbyText.'</span></p>
 	</div>
 </body>
 </html> 
 		';
 
-		return $return;
-	}
-	
-	
-	
-	/*
-	 * Get local midi files
-	 */
-	function getLocalMidiFiles() {
-		
-		$return = array();
-		$dir    = dirname(__FILE__).'/../../../midi/';
-		$files = scandir($dir);
-		if (count($files) > 0) {
-			foreach ($files as $key => $file) {
-				if (!is_dir($file) && substr(strrchr($file, '.'), 1) == 'mid') {
-					array_push($return, $file);
-				}
-			}
-		}
-		
 		return $return;
 	}
 	

@@ -22,7 +22,7 @@
 
 		// show bomb!
 		} else {
-			echo $pageBuilder->buildBomb($bomb);
+			echo $pageBuilder->buildBomb($bomb[0]);
 		}
 
 

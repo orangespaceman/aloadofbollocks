@@ -27,6 +27,28 @@ var formHelper = function(){
 	 */
 	var successArea = null;
 	
+	
+	/*
+	 * Form displayed?
+	 */
+	var formDisplayed = false;
+	
+	
+	/*
+	 * Add bomb link
+	 */
+	var addBomb = null;
+	
+	/*
+	 * hider element
+	 */
+	var hider = null;
+	
+	/*
+	 * form close button
+	 */
+	var formCloseButton = null;
+	
 
 	/**
 	 * The options passed through to this function
@@ -73,7 +95,27 @@ var formHelper = function(){
 			}
 		}
 		
-
+		// set up the form
+		setForm();
+					
+		// show bomb form
+		if (!addBomb) {
+			addBomb = $('<p><a href="#bomb-form" class="add">Add a bomb</a></p>').prependTo("#order");
+			addBomb.find('a').bind('click', function(e){
+				e.preventDefault();
+				if (!formDisplayed) {
+					displayForm();
+				}
+			});
+		} 
+	};
+	
+		
+	/*
+	 * set up the form
+	 */
+	var setForm = function() {
+		
 		// for each required field... 
 		var requiredFields = $(options.formElement).find('.required');
 		$(requiredFields).each(function(counter){
@@ -86,14 +128,16 @@ var formHelper = function(){
 				// validate as you type
 				.typing({
 				    stop: function () {
-						formFieldValidityCheck($(requiredFields[counter]));
+						if (!!formDisplayed) {
+							formFieldValidityCheck($(requiredFields[counter]));
+						}
 					},
 				    delay: 250
 				})
 				
 				// validate after exit
 				.bind('blur', function(e){
-					if ($(this).val() != "") {
+					if ($(this).val() != "" && !!formDisplayed) {
 						formFieldValidityCheck($(this));
 					}
 				});
@@ -327,14 +371,46 @@ var formHelper = function(){
 		if (errorElement.length < 1) {
 			errorElement = $('<p class="submit-error" />')
 			.insertAfter(submitLoader)
-			.css({opacity:0})
-			.animate({opacity:1}, 250);
+			.css({opacity:0});
 		};
-		errorElement.text('Please fix the errors marked above');
+		errorElement.text('Please fix the errors marked above').animate({opacity:1}, 250);
 		
 		submitLoader.animate({
 			opacity:0
 		}, 250);
+	};
+	
+	
+	/*
+	 *
+	 */
+	var resetForm = function() {
+
+		// reset content
+		var els = $('input.text');
+		els.val('').addClass('invalid');
+		
+		els.each(function(counter){
+			el = $(this);
+			var parent = el.parent().parent();
+			var loader = $(parent).find('img');
+
+			// reset loader
+			loader
+				.attr('src', './_includes/img/site/ajax-loader.gif')
+				.css({opacity:0});
+			
+			
+			// reset error text
+			var errorElement = $(parent).find('p.error');
+			errorElement.css({
+				marginRight:"-10px",
+				opacity:0
+			});
+		});
+		
+		$(options.formElement).find('fieldset#j-bomb-form-submit p.submit-error').css({opacity:0});
+		
 	};
 	
 	
@@ -362,40 +438,17 @@ var formHelper = function(){
 				// condition : if the data has been retrieved successfully, save it
 				if (result.success == 1) {
 					
-					if (!successArea) {
-						successArea = $('<div />')
-							.attr('id', 'success')
-							.insertAfter("#bomb-form")
-							.css({
-								opacity:0,
-								marginTop:"20px"
-							});
-					} else {
-						successArea.animate({
-							opacity:0,
-							marginTop:"20px"
-						}, 500);
-					}
-					successArea
-						.html(result.message)
-						.animate({
-							opacity:1,
-							marginTop:"30px"
-						}, 500);
-						
-						
-					// duplicate an existing bomb box
-					var bombBox = $('#existing-bombs .bomb-wrapper:last')
-						.clone()
-						.attr('id', 'bomb-' + result.details.slug);
+					hideForm(function(){
 					
-					bombBox.find('a').attr('href', './' + result.details.slug);
-					bombBox.find('img').attr('src', result.details.imgurl);
-					bombBox.find('strong').text(result.details.title);
-					bombBox.find('span.bomb-dateadded').text('Just now');
-					bombBox.find('span.bomb-views').text(0);
+						bombs.addBomb(result.details, 'top');
+
+						// update counters
+						$("span#end-count").text(++bombs.counters.endCount);
+						$("span#bomb-count").text(++bombs.counters.totalBombCount);
+						bombs.counters.visibleBombCount++;
 						
-					$('#existing-bombs').append(bombBox);
+					});
+						
 					
 					
 				// an error has occurred, prepare to display it
@@ -408,6 +461,73 @@ var formHelper = function(){
 				}, 250);
 				
 		});
+	};
+	
+	
+	/*
+	 * 
+	 */
+	var displayForm = function() {
+	
+		if (!formDisplayed) {
+			formDisplayed = true;
+			
+			if (!formCloseButton) {
+				formCloseButton = $('<p id="close-form"><a href="#">x</a></p>').prependTo("#bomb-form");
+				formCloseButton.bind('click', function(e){
+					e.preventDefault();
+					hideForm();
+				});
+			}
+			
+			if (!hider) {
+				hider = $('<div id="hider" />').appendTo('body');
+			}
+			
+			var pageHeight = $(document).height();
+			
+			hider.css({
+				opacity:0,
+				display:"block",
+				height: pageHeight + "px"
+			}).animate({
+				opacity:1
+			}, 250, function(){
+				$("#bomb-form").stop().animate({
+					marginTop:"-125px"
+				}, 500, function(){
+					$("#bomb-form input:first").focus();
+				});
+			});
+		}
+	};
+	
+	
+	/*
+	 * 
+	 */
+	var hideForm = function(callback) {
+		if (!!formDisplayed) {
+			formDisplayed = false;
+			
+			$("#bomb-form").stop().animate({
+				marginTop:"-1000px"
+			}, 500, function(){
+				hider.animate({
+					opacity:0
+				}, 250, function(){
+					hider.css({
+						display:"none"
+					});
+
+					resetForm();
+
+					if (!!callback) {
+						callback();
+					}
+				});
+			});
+		}
 	};
 
 
