@@ -29,6 +29,8 @@ class PageBuilder {
 	<head>
 		<title>'.$bomb->title.' | J-Bomb</title>	
 		<meta charset="UTF-8" />
+		<link rel="shortcut icon" href="/_includes/icons/favicon.ico" type="image/x-icon" />
+		<link rel="icon" href="/_includes/icons/favicon.ico" type="image/x-icon" />
 		<style>
 			* { margin:0; padding:0; }
 			html, body { width:100%; height:100%; background:#000; }
@@ -89,7 +91,11 @@ class PageBuilder {
 	<head>
 		<title>J-Bomb</title>	
 		<meta charset="UTF-8" />
-		<link rel="stylesheet" href="./_includes/css/site/screen.css" />
+		<link rel="stylesheet" href="/_includes/css/site/screen.css" />
+		
+		<link rel="shortcut icon" href="/_includes/icons/favicon.ico" type="image/x-icon" />
+		<link rel="icon" href="/_includes/icons/favicon.ico" type="image/x-icon" />
+				
 		<script src="http://www.google.com/jsapi"></script>
 		<script>
 			google.load("jquery", "1.4.2");
