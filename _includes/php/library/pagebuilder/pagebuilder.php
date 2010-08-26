@@ -39,7 +39,10 @@ class PageBuilder {
 			h1 { position:absolute;z-index:3;left:10px;bottom:10px;font-family:sans-serif;font-size:12px;}
 			a { color:#fff; text-decoration:none }
 			a:hover { color:#ff0; }
-			body {
+			body.loading {
+				background: url(/_includes/img/site/ajax-loader-black.gif) #000 center center fixed no-repeat;
+			}
+			body.loaded {
 				background: url('.$bomb->imgurl.') #000 center center fixed no-repeat;
 				-moz-background-size: contain;
 				background-size: contain;
@@ -59,8 +62,16 @@ class PageBuilder {
 		}
 		
 		$return .= '
+		
+		<script>
+			var img = new Image();
+			img.src = "'.$bomb->imgurl.'";
+			img.onload = function() {
+				document.getElementsByTagName("body")[0].className = "loaded";
+			}
+		</script>
 	</head>
-	<body>
+	<body class="loading">
 		<h1><a href="./">J-bomb!</a></h1>
 		<p id="close"><a href="./">x</a></p>
 		<div id="bomb"></div>
