@@ -23,6 +23,8 @@ class PageBuilder {
 	function buildBomb($bomb) {
 
 		$this->dbcalls->increaseImageCount($bomb->slug);
+		
+		$ini_array = parse_ini_file(dirname(__FILE__)."/../../../../config.ini.php", true);
 
 		$return = '<!DOCTYPE html>
 <html>
@@ -70,6 +72,25 @@ class PageBuilder {
 				document.getElementsByTagName("body")[0].className = "loaded";
 			}
 		</script>
+		
+		<script type="text/javascript">
+			var _gaq = _gaq || [];
+		';
+		if (isset($ini_array['config']['analytics'])) {
+			$return .='
+			_gaq.push(["_setAccount", "'.$ini_array['config']['analytics'].'"]);
+			_gaq.push(["_trackPageview"]);
+
+			(function() {
+			var ga = document.createElement("script"); ga.type = "text/javascript"; ga.async = true;
+			ga.src = ("https:" == document.location.protocol ? "https://ssl" : "http://www") + ".google-analytics.com/ga.js";
+			var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(ga, s);
+			})();
+			';
+		}
+		$return .='
+		</script>
+		
 	</head>
 	<body class="loading">
 		<h1><a href="./">J-bomb!</a></h1>
@@ -96,6 +117,10 @@ class PageBuilder {
 		$order = (isset($_GET['o']) && $_GET['o'] == "p") ? "p" : "d";		
 		$bombs = $this->dbcalls->getBombs($count, $offset, $order);
 		$bombCount = $this->dbcalls->getBombCount();
+		
+		$canAddBomb = $this->dbcalls->canAddBomb();
+		
+		$ini_array = parse_ini_file(dirname(__FILE__)."/../../../../config.ini.php", true);
 
 		$return = '<!DOCTYPE html>
 <html>
@@ -117,6 +142,25 @@ class PageBuilder {
 		<script src="./_includes/js/site/form.js"></script>
 		<script src="./_includes/js/site/bombs.js"></script>
 		<script src="./_includes/js/site/init.js"></script>
+		
+		<script type="text/javascript">
+			var _gaq = _gaq || [];
+		';
+		if (isset($ini_array['config']['analytics'])) {
+			$return .='
+			_gaq.push(["_setAccount", "'.$ini_array['config']['analytics'].'"]);
+			_gaq.push(["_trackPageview"]);
+
+			(function() {
+			var ga = document.createElement("script"); ga.type = "text/javascript"; ga.async = true;
+			ga.src = ("https:" == document.location.protocol ? "https://ssl" : "http://www") + ".google-analytics.com/ga.js";
+			var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(ga, s);
+			})();
+			';
+		}
+		$return .='
+		</script>
+		
 	</head>
 	<body>
 		<div id="wrapper">
@@ -129,6 +173,12 @@ class PageBuilder {
 					</ul>
 				</div>
 			</header>
+			
+			';
+			
+			if ($canAddBomb) {
+				
+				$return .= '
 			
 			<div class="row clearfix">
 				<div id="bomb-form">
@@ -185,7 +235,12 @@ class PageBuilder {
 					</form> 
 				</div>
 			</div>
+		';
 		
+		}
+		
+		
+		$return .= '
 			<div id="existing-bombs" class="clearfix">
 		';
 	

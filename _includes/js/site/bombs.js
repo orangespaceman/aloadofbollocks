@@ -104,6 +104,10 @@ var bombs = function(){
 	 */
 	fetchMoreBombs = function(restart) {
 		
+		// GA call
+		_gaq.push(['_trackPageview', '/ajax/fetch-more']);
+
+		
 		postData = 'method=retrieve';
 		
 		if (!!restart) {

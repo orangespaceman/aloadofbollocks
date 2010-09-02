@@ -99,7 +99,7 @@ var formHelper = function(){
 		setForm();
 					
 		// show bomb form
-		if (!addBomb) {
+		if (!addBomb && $("#bomb-form").length > 0) {
 			addBomb = $('<p><a href="#bomb-form" class="add">Add a bomb</a></p>').prependTo("#order");
 			addBomb.find('a').bind('click', function(e){
 				e.preventDefault();
@@ -418,6 +418,9 @@ var formHelper = function(){
 	 *
 	 */
 	var save = function() {
+
+		// GA call
+		_gaq.push(['_trackPageview', '/ajax/add-bomb']);
 
 		// generate our post data from the form
 		var postData = $(options.formElement).formSerialize();

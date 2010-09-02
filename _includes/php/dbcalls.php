@@ -233,5 +233,25 @@ class dbCalls {
 			);
 		}
 	}
+	
+	
+	/*
+	 * Can add bomb
+	 */
+	function canAddBomb() {
+		
+		$ini_array = parse_ini_file(dirname(__FILE__)."/../../config.ini.php", true);
+		
+		if ($ini_array['config']['restrictIp']) {
+			foreach($ini_array['ip']['ip'] as $ip) {
+				if ($ip == $_SERVER['REMOTE_ADDR']) {
+					return true;
+				}
+			}
+			return false;
+		} else {
+			return true;
+		}
+	}
 }
 ?>
