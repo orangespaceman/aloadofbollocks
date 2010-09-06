@@ -127,8 +127,21 @@ class PageBuilder {
 	<head>
 		<title>J-Bomb</title>	
 		<meta charset="UTF-8" />
-		<link rel="stylesheet" href="/_includes/css/site/screen.css" />
+		<link rel="stylesheet" href="./_includes/css/site/screen.css" />
+		';
 		
+		$android = preg_match("/Android/i", $_SERVER['HTTP_USER_AGENT']);
+		$iPhone = preg_match("/iP(hone|od)/i", $_SERVER['HTTP_USER_AGENT']);
+		$iP = preg_match("/iP(hone|od|ad)/i", $_SERVER['HTTP_USER_AGENT']);
+		if ($iPhone == true || $android == true){
+	  		echo '
+		<link rel="stylesheet" href="./_includes/css/site/mobile.css" />		
+		<meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0" />
+			';
+		}
+
+		
+		$return .= '
 		<link rel="shortcut icon" href="/_includes/icons/favicon.ico" type="image/x-icon" />
 		<link rel="icon" href="/_includes/icons/favicon.ico" type="image/x-icon" />
 				

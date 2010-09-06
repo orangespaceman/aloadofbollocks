@@ -1,0 +1,70 @@
+/*
+ * Mobile CSS
+ *
+ */
+
+
+/* mobile resets */	
+	img {
+	  max-width:100% !important;
+	  height:auto !important;
+	}
+	
+	
+
+/* page elements */	
+	header h1 {
+		float:none !important;
+		width:auto !important;
+		font-size:2em;
+	}
+	
+	/* header : order block */
+		header #order {
+			float:none !important;
+			width:auto !important;
+			padding:0;
+		}
+		
+		header #order p {
+			display:none;
+		}
+		
+		.bomb .bomb-image,
+		.bomb .bomb-view,
+		.bomb .bomb-content {
+			float:none !important;
+			width:auto !important;
+			margin:0 !important;
+		}
+		
+		.bomb .bomb-image {
+			margin-bottom:10px !important;
+		}
+		
+		.bomb .bomb-view ul {
+			display:none;
+		}
+		
+		.bomb .bomb-view p.url {
+			font-size:1.2em !important;
+		}
+		
+		#count {
+			height:auto !important;
+			background:#fff;
+			padding:10px !important;
+		}
+		
+		#count p {
+			display:block !important;
+			width:100% !important;
+			padding:0 !important;
+			background:#fff;
+			clear:both !important;
+			float:none !important;
+			margin:0 !important;
+		}
+
+
+/* global ids / areas */
