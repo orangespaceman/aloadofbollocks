@@ -63,9 +63,11 @@ var bombs = function(){
 			
 			$q.typing({
 			    stop: function () {
-//					if ($q.val() != "") {
+					if ($q.val() != "") {
 						removeCurrentBombs(null, counters.orderBy, $q.val());
-//					}
+					} else {
+						removeCurrentBombs(null, counters.orderBy);
+					}
 				},
 			    delay: 500
 			});
