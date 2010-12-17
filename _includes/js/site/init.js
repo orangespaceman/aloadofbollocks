@@ -16,6 +16,7 @@
 				ajaxPath: "./_includes/php/ajax/submit/"
 			});
 			
+
 			//  copy to clipboard	
 			Permalinks.init(); 
 			
@@ -27,6 +28,12 @@
 			
 			// init order by
 			bombs.initOrderBy();
+			
+			// search
+			bombs.initSearch({
+				ajaxPath: "./_includes/php/ajax/retrieve/"
+			});
+			
 			
 		});
 

@@ -26,6 +26,22 @@
 				echo json_encode($return);
 			
 			break;
+			
+			//
+			case "search":
+
+				$q=(isset($_POST['q'])) ? $_POST['q'] : "cat";
+				$orderby=(isset($_POST['orderby']) && $_POST['orderby'] == "date") ? "d" : "p";
+
+			 	$result = $model->searchBombs($q,$orderby);
+				$return = array(
+					"success" => 1,
+					"details" => $result
+				);
+				echo json_encode($return);
+		
+			break;
+			
 		}
 	}
 	
@@ -62,5 +78,12 @@ class JBombRetrieval
 	 */
 	public function retrieveBombs($count, $offset, $orderby) {
 		return $this->dbcalls->getBombs($count, $offset, $orderby);
+	}
+	
+	/*
+	 *
+	 */
+	public function searchBombs($q, $orderby) {
+		return $this->dbcalls->searchBombs($q, $orderby);
 	}
 }

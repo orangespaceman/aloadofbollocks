@@ -131,7 +131,7 @@
 		h1 { 
 			font-family: SilkscreenNormal, monospace;
 			line-height:1;
-			font-size:6em;
+			font-size:3em;
 			font-weight:bold;
 			margin:0 10px;
 		}
@@ -594,13 +594,13 @@
 		
 		header h1 {
 			float:left;
-			width:40%;
+			width:300px;
 		}
 		
 		/* header : order block */
 			header #order {
 				float:right;
-				width:40%;
+				width:280px;
 				padding:10px;
 			}
 			
@@ -629,6 +629,12 @@
 			
 			header #order ul.loading {
 				background:url(../../img/site/ajax-loader-white.gif) #fff no-repeat left top;
+			}
+		
+		
+		/* header : search form */
+			header input#q {
+				margin:20px auto 0 auto;
 			}
 			
 	

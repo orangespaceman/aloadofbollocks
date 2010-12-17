@@ -17,8 +17,12 @@ var bombs = function(){
 	/*
 	 *
 	 */
-	bombTemplate = null
+	bombTemplate = null,
 	
+	/*
+	 *
+	 */
+	$q = null	
 	;
 	
 	
@@ -33,6 +37,40 @@ var bombs = function(){
 		visibleBombCount : null,
 		orderBy : null
 	};
+	
+	
+	/*
+	 * set up the form
+	 */
+	var initSearch = function(initOptions) {
+		
+		ajaxPath = initOptions.ajaxPath;
+		
+		updateCounters();
+		
+		// store a bomb for later use
+		bombTemplate = $('#existing-bombs .bomb-container:first').clone(false);
+		bombTemplate.find('.bomb-image img').attr('src', './_includes/img/site/ajax-loader.gif');
+		
+		// create search
+		$q = $("<input />")
+			.addClass('text')
+			.attr('type', 'text')
+			.attr('id', 'q')
+			.attr('name', 'q')
+			.attr('placeholder', 'search')
+			.insertBefore('h1');
+			
+			$q.typing({
+			    stop: function () {
+//					if ($q.val() != "") {
+						removeCurrentBombs(null, counters.orderBy, $q.val());
+//					}
+				},
+			    delay: 500
+			});
+	};
+	
 	
 	
 	/* 
@@ -102,22 +140,27 @@ var bombs = function(){
 	/*
 	 * 
 	 */
-	fetchMoreBombs = function(restart) {
+	fetchMoreBombs = function(restart, q) {
 		
 		// GA call
 		_gaq.push(['_trackPageview', '/ajax/fetch-more']);
 
-		
-		postData = 'method=retrieve';
+		if (!q) {
+			postData = 'method=retrieve';
+			postData += '&limit=' + counters.limit;
+		} else {
+			postData = 'method=search';
+			postData += '&q=' + escape(q);
+		}
+
+		postData += '&orderby=' + counters.orderBy;
 		
 		if (!!restart) {
 			postData += '&start=0';
 		} else {
 			postData += '&start=' + counters.endCount;
 		}
-
-		postData += '&limit=' + counters.limit;
-		postData += '&orderby=' + counters.orderBy;
+		
 
 		// prevent ie caching bug
 		postData += '&random='+Math.random();
@@ -132,7 +175,7 @@ var bombs = function(){
 				
 				// condition : if the data has been retrieved successfully, push new bombs to the page
 				if (result.success == 1) {
-					
+										
 					// add each bomb individually
 					$(result.details).each(function(counter){
 						
@@ -262,7 +305,7 @@ var bombs = function(){
 	/*
 	 *
 	 */
-	var removeCurrentBombs = function(el, type){
+	var removeCurrentBombs = function(el, type, q){
 		
 		$($('div.bomb-container').get().reverse()).each(function(counter){
 			$(this).delay(counter*250).animate({
@@ -278,7 +321,11 @@ var bombs = function(){
 					$("span#order-by").text(type);
 					
 					updateCounters();
-					fetchMoreBombs('true');
+					if (!!q) {
+						fetchMoreBombs('true', q);
+					} else {
+						fetchMoreBombs('true');
+					}
 					
 					// condition : add 'more' button to the foot of the page?
 					if (counters.totalBombCount > counters.endCount) {
@@ -297,6 +344,7 @@ var bombs = function(){
 	return {
 		initAddMoreLink: initAddMoreLink,
 		initOrderBy: initOrderBy,
+		initSearch: initSearch,
 		addBomb: addBomb,
 		counters: counters
 	};

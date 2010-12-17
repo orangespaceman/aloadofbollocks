@@ -125,7 +125,7 @@ class PageBuilder {
 		$return = '<!DOCTYPE html>
 <html>
 	<head>
-		<title>J-Bomb</title>	
+		<title>aloadofbollocks.com</title>	
 		<meta charset="UTF-8" />
 		<link rel="stylesheet" href="./_includes/css/site/screen.css" />
 		';
@@ -178,7 +178,7 @@ class PageBuilder {
 	<body>
 		<div id="wrapper">
 			<header>
-				<h1>J-BOMB</h1>
+				<h1>a load of bollocks</h1>
 				<div id="order">
 					<ul class="horiznavlist clearfix">
 						<li id="order-date" class="first">Order by: <a class="date" href="./?o=d">Date added</a>

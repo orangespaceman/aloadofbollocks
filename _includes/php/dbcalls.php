@@ -47,6 +47,35 @@ class dbCalls {
 	
 	
 	/*
+	 * search bombs
+	 */
+	function searchBombs($q, $orderby="d") {
+		
+		$sql = "SELECT *, date_format(dateadded, '%W %D %M %Y, %k:%i') as date_added from `j-bombs` where `title` like '%".$q."%' or `slug` like '%".$q."%'";
+
+		if ($orderby == "d") {
+			$sql .= " Order by dateadded desc ";
+		} else if ($orderby == "p") {
+			$sql .= " Order by views desc ";
+		}
+
+		$result = $this->dbCon->selectQuery($sql);
+		
+		if (count($result) < 1) {
+			$result = $this->getBombs();
+		}
+		
+		// add in a hard-coded URL
+		foreach ($result as $value) {
+			$value->url = 'http://' . $_SERVER['SERVER_NAME'] . '/' . $value->slug;
+		}
+		
+		return $result;
+	}
+	
+	
+	
+	/*
 	 * get bomb
 	 */
 	function getBomb($slug) {
