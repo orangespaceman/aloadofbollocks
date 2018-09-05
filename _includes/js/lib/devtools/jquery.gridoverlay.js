@@ -3,8 +3,6 @@
  *
  * http://code.google.com/p/jsgridoverlay/
  *
- * Copyright (c) 2006 - 2008 Michael Allanson, Pete Goodman, Richard Hallows
- *
  * $Id: jquery.gridoverlay.js 11 2008-09-17 17:56:41Z richhallows $
  *
  * Dual licensed under the MIT and GPL licenses:
@@ -17,7 +15,7 @@
 (function($) {
 
 	$.gridOverlay = function(url, settings) {
-	
+
 		// define defaults and override with settings, if available
 		settings = $.extend({
 			imgExt: "png",
@@ -116,7 +114,7 @@
 				if (typeof $.cookie('gridOverlayState') == "string") {
 					$grid.css("opacity", $.cookie('gridOverlayOpacity'));
 				}
-				
+
 				// display errors if there are any
 				errorCheck();
 			}
@@ -130,14 +128,14 @@
 		 * @returns void
 		 */
 		function showError(message, errorType) {
-			
+
 			// set id for error div
 			var errorId = settings.gridId + '-' + errorType + 'error';
 
 			// clear existing errors
-			$grid.children('#' + errorId).each(function() { 
+			$grid.children('#' + errorId).each(function() {
 				$(this).remove();
-			}); 
+			});
 
 			// create dom grid element as jquery object
 			var $error = $('<div></div>');
@@ -151,7 +149,7 @@
 			$error.text(message);
 			$grid.prepend($error);
 		};
-		
+
 		/**
 		 * Checks for any errors
 		 *
